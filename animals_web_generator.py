@@ -40,34 +40,38 @@ def write_file(file_path: str, content: str) -> None:
 
 def generate_animals_string(animals_data: list) -> str:
     """
-    Iterates through the animal data and generates a single formatted string.
-    Fields are only included if they exist in the data.
+    Iterates through the animal data and generates an HTML string.
+    Each animal is wrapped in a list item tag. Fields are only included
+    if they exist in the data.
 
     :param animals_data: A list of dictionaries representing animals.
-    :return: A string containing the formatted animal information.
+    :return: A string containing the HTML formatted animal information.
     """
     output = ""
     for animal in animals_data:
+        # Start the HTML list item
+        output += '<li class="cards__item">\n'
+
         name = animal.get("name")
         if name:
-            output += f"Name: {name}\n"
+            output += f"Name: {name}<br/>\n"
 
         characteristics = animal.get("characteristics", {})
         diet = characteristics.get("diet")
         if diet:
-            output += f"Diet: {diet}\n"
+            output += f"Diet: {diet}<br/>\n"
 
         # Locations, only need the first item
         locations = animal.get("locations")
         if locations and len(locations) > 0:
-            output += f"Location: {locations[0]}\n"
+            output += f"Location: {locations[0]}<br/>\n"
 
         animal_type = characteristics.get("type")
         if animal_type:
-            output += f"Type: {animal_type}\n"
+            output += f"Type: {animal_type}<br/>\n"
 
-        # Empty line to separate animals
-        output += "\n"
+        # Close the HTML list item
+        output += '</li>\n'
 
     return output
 
