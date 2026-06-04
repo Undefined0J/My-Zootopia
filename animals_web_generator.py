@@ -7,6 +7,8 @@ def load_data(file_path: str) -> list:
 
     :param file_path: The path to the JSON file.
     :return: A parsed list of dictionaries containing animal data.
+    :raises FileNotFoundError: If the file does not exist.
+    :raises json.JSONDecodeError: If the JSON content is malformed.
     """
     with open(file_path, "r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -18,6 +20,7 @@ def read_file(file_path: str) -> str:
 
     :param file_path: The path to the text file.
     :return: The content of the file as a string.
+    :raises FileNotFoundError: If the file does not exist.
     """
     with open(file_path, "r", encoding="utf-8") as handle:
         return handle.read()
@@ -29,6 +32,7 @@ def write_file(file_path: str, content: str) -> None:
 
     :param file_path: The path to the output file.
     :param content: The string content to be written.
+    :raises OSError: If the file cannot be written.
     """
     with open(file_path, "w", encoding="utf-8") as handle:
         handle.write(content)
@@ -72,21 +76,31 @@ def main() -> None:
     """
     Main entry point of the script.
     Orchestrates reading data, generating the HTML string, and writing the output file.
+    Handles potential file and data parsing errors gracefully.
     """
-    # 1. Load the animal data
-    animals_data = load_data("animals_data.json")
+    try:
+        # 1. Load the animal data
+        animals_data = load_data("animals_data.json")
 
-    # 2. Generate the formatted string
-    animals_info_string = generate_animals_string(animals_data)
+        # 2. Generate the formatted string
+        animals_info_string = generate_animals_string(animals_data)
 
-    # 3. Read the HTML template
-    html_template = read_file("animals_template.html")
+        # 3. Read the HTML template
+        html_template = read_file("animals_template.html")
 
-    # 4. Replace the placeholder with the generated string
-    final_html = html_template.replace("__REPLACE_ANIMALS_INFO__", animals_info_string)
+        # 4. Replace the placeholder with the generated string
+        final_html = html_template.replace("__REPLACE_ANIMALS_INFO__", animals_info_string)
 
-    # 5. Write the final HTML content to a new file
-    write_file("animals.html", final_html)
+        # 5. Write the final HTML content to a new file
+        write_file("animals.html", final_html)
+        print("Website successfully generated in 'animals.html'.")
+
+    except FileNotFoundError as error:
+        print(f"Error: Required file not found - {error.filename}")
+    except json.JSONDecodeError as error:
+        print(f"Error: Failed to parse JSON data. Malformed syntax at line {error.lineno}.")
+    except OSError as error:
+        print(f"Error: An I/O error occurred while handling files - {error.strerror}")
 
 
 if __name__ == "__main__":
