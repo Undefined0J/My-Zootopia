@@ -38,50 +38,57 @@ def write_file(file_path: str, content: str) -> None:
         handle.write(content)
 
 
+def serialize_animal(animal_obj: dict) -> str:
+    """
+    Serializes a single animal dictionary into an HTML list item.
+
+    :param animal_obj: A dictionary containing animal data.
+    :return: An HTML formatted string representing the animal card.
+    """
+    output = '<li class="cards__item">\n'
+
+    name = animal_obj.get("name")
+    if name:
+        output += f'  <div class="card__title">{name}</div>\n'
+
+    characteristics = animal_obj.get("characteristics", {})
+    diet = characteristics.get("diet")
+
+    locations = animal_obj.get("locations")
+    first_location = locations[0] if locations and len(locations) > 0 else None
+
+    animal_type = characteristics.get("type")
+
+    # Only create the paragraph if at least one detail exists
+    if diet or first_location or animal_type:
+        output += '  <p class="card__text">\n'
+
+        if diet:
+            output += f"      <strong>Diet:</strong> {diet}<br/>\n"
+
+        if first_location:
+            output += f"      <strong>Location:</strong> {first_location}<br/>\n"
+
+        if animal_type:
+            output += f"      <strong>Type:</strong> {animal_type}<br/>\n"
+
+        output += "  </p>\n"
+
+    output += "</li>\n"
+
+    return output
+
+
 def generate_animals_string(animals_data: list) -> str:
     """
-    Iterates through the animal data and generates an HTML string.
-    Each animal is wrapped in a professionally styled list item tag.
-    Fields are only included if they exist in the data.
+    Iterates through the animal data and generates a combined HTML string.
 
     :param animals_data: A list of dictionaries representing animals.
-    :return: A string containing the HTML formatted animal information.
+    :return: A string containing the combined HTML formatted animal information.
     """
     output = ""
     for animal in animals_data:
-        # Start the HTML list item
-        output += '<li class="cards__item">\n'
-
-        name = animal.get("name")
-        if name:
-            output += f'  <div class="card__title">{name}</div>\n'
-
-        # Extract characteristics and locations
-        characteristics = animal.get("characteristics", {})
-        diet = characteristics.get("diet")
-
-        locations = animal.get("locations")
-        first_location = locations[0] if locations and len(locations) > 0 else None
-
-        animal_type = characteristics.get("type")
-
-        # Only create the paragraph if at least one detail exists
-        if diet or first_location or animal_type:
-            output += '  <p class="card__text">\n'
-
-            if diet:
-                output += f"      <strong>Diet:</strong> {diet}<br/>\n"
-
-            if first_location:
-                output += f"      <strong>Location:</strong> {first_location}<br/>\n"
-
-            if animal_type:
-                output += f"      <strong>Type:</strong> {animal_type}<br/>\n"
-
-            output += "  </p>\n"
-
-        output += "</li>\n"
-
+        output += serialize_animal(animal)
     return output
 
 
@@ -95,7 +102,7 @@ def main() -> None:
         # 1. Load the animal data
         animals_data = load_data("animals_data.json")
 
-        # 2. Generate the formatted string
+        # 2. Generate the formatted HTML string
         animals_info_string = generate_animals_string(animals_data)
 
         # 3. Read the HTML template
