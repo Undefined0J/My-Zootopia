@@ -41,8 +41,8 @@ def write_file(file_path: str, content: str) -> None:
 def generate_animals_string(animals_data: list) -> str:
     """
     Iterates through the animal data and generates an HTML string.
-    Each animal is wrapped in a list item tag. Fields are only included
-    if they exist in the data.
+    Each animal is wrapped in a professionally styled list item tag.
+    Fields are only included if they exist in the data.
 
     :param animals_data: A list of dictionaries representing animals.
     :return: A string containing the HTML formatted animal information.
@@ -54,24 +54,33 @@ def generate_animals_string(animals_data: list) -> str:
 
         name = animal.get("name")
         if name:
-            output += f"Name: {name}<br/>\n"
+            output += f'  <div class="card__title">{name}</div>\n'
 
+        # Extract characteristics and locations
         characteristics = animal.get("characteristics", {})
         diet = characteristics.get("diet")
-        if diet:
-            output += f"Diet: {diet}<br/>\n"
 
-        # Locations, only need the first item
         locations = animal.get("locations")
-        if locations and len(locations) > 0:
-            output += f"Location: {locations[0]}<br/>\n"
+        first_location = locations[0] if locations and len(locations) > 0 else None
 
         animal_type = characteristics.get("type")
-        if animal_type:
-            output += f"Type: {animal_type}<br/>\n"
 
-        # Close the HTML list item
-        output += '</li>\n'
+        # Only create the paragraph if at least one detail exists
+        if diet or first_location or animal_type:
+            output += '  <p class="card__text">\n'
+
+            if diet:
+                output += f"      <strong>Diet:</strong> {diet}<br/>\n"
+
+            if first_location:
+                output += f"      <strong>Location:</strong> {first_location}<br/>\n"
+
+            if animal_type:
+                output += f"      <strong>Type:</strong> {animal_type}<br/>\n"
+
+            output += "  </p>\n"
+
+        output += "</li>\n"
 
     return output
 
