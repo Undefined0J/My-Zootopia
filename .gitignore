@@ -1,0 +1,10 @@
+# Virtuelle Umgebung
+.venv/
+venv/
+
+# IDE
+.idea/
+
+# Python Cache
+__pycache__/
+*.pyc
